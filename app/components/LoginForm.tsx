@@ -22,6 +22,7 @@ import { setUser } from "@/app/state/users/userSlice";
 import { AppDispatch } from "../state/store";
 
 import { Google } from "@mui/icons-material";
+import BankId from "./BankId";
 
 const LoginForm = () => {
 	const [successMessage, setSuccessMessage] = useState("");
@@ -102,7 +103,6 @@ const LoginForm = () => {
 								<TextField
 									{...field}
 									fullWidth
-									required
 									label="Email"
 									variant="standard"
 									disabled={loading}
@@ -143,6 +143,13 @@ const LoginForm = () => {
 							startIcon={<Google />}>
 							Continue with Google
 						</Button>
+
+						<Typography
+							variant="body2"
+							sx={{ mt: 3, mb: 2, textAlign: "center" }}>
+							Login with BankID
+						</Typography>
+						<BankId />
 
 						{successMessage && (
 							<Alert

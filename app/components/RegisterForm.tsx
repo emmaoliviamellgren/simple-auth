@@ -26,6 +26,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/state/store";
 import { setUser } from "@/app/state/users/userSlice";
 import { Google } from "@mui/icons-material";
+import BankId from "./BankId";
 
 const RegisterForm = () => {
 	const [successMessage, setSuccessMessage] = useState("");
@@ -114,7 +115,6 @@ const RegisterForm = () => {
 								<TextField
 									{...field}
 									fullWidth
-									required
 									label="Name"
 									variant="standard"
 									disabled={loading}
@@ -131,7 +131,6 @@ const RegisterForm = () => {
 								<TextField
 									{...field}
 									fullWidth
-									required
 									label="Email"
 									variant="standard"
 									disabled={loading}
