@@ -1,4 +1,4 @@
-import { fetchUserData } from "@/app/lib/auth.db";
+import { fetchUserData } from "@/app/lib/firebaseAuth";
 import { User } from "@/app/types/User";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 

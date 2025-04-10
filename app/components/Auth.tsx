@@ -8,7 +8,7 @@ import LoginForm from "./LoginForm";
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { User } from "firebase/auth";
-import { completeEmailLinkLogin, fetchUserData } from "../lib/auth.db";
+import { completeEmailLogin, fetchUserData } from "../lib/firebaseAuth";
 import { setUser } from "../state/users/userSlice";
 
 export const Auth = () => {
@@ -24,7 +24,7 @@ export const Auth = () => {
 		async function checkForEmailLink() {
 			setLoading(true);
 			try {
-				const user = await completeEmailLinkLogin();
+				const user = await completeEmailLogin();
 				if (user) {
 					await handleUserAuthenticated(user);
 				}
@@ -36,7 +36,7 @@ export const Auth = () => {
 		}
 
 		checkForEmailLink();
-	}, [dispatch]);
+	}, []);
 
 	const handleUserAuthenticated = async (user: User) => {
 		try {
@@ -50,7 +50,12 @@ export const Auth = () => {
 	};
 
 	return (
-		<> {loading && <div className="text-center flex items-center justify-center mx-auto">Loading...</div>}
+		<>
+			{loading && (
+				<div className="text-center flex items-center justify-center mx-auto">
+					Loading...
+				</div>
+			)}
 			{isAuthenticated ? (
 				<UserData user={user} />
 			) : (
@@ -109,4 +114,4 @@ export const Auth = () => {
 			)}
 		</>
 	);
-}
+};

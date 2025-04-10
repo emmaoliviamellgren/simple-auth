@@ -6,7 +6,7 @@ import {
 	fetchUserData,
 	sendLoginLink,
 	signInWithGoogle,
-} from "@/app/lib/auth.db";
+} from "@/app/lib/firebaseAuth";
 import {
 	Button,
 	TextField,

@@ -5,7 +5,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Provider } from "react-redux";
 import { store } from "@/app/state/store";
-import { Auth } from "./_components/Auth";
+import { Auth } from "./components/Auth";
 
 export default function Home() {
 	return (

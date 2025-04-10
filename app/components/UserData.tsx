@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../state/store";
 import { useState } from "react";
 import { resetUser } from "../state/users/userSlice";
-import { logoutUser } from "../lib/auth.db";
+import { logoutUser } from "../lib/firebaseAuth";
 import { User } from "../types/User";
 
 const UserData = ({ user }: { user: User }) => {

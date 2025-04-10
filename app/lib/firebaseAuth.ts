@@ -28,23 +28,18 @@ const sendLoginLink = async (email: string) => {
 	};
 
 	localStorage.setItem("emailForSignIn", email);
-
 	return sendSignInLinkToEmail(auth, email, actionCodeSettings);
 };
 
-const completeEmailLinkLogin = async () => {
-	const url = window.location.href;
-
-	if (!isSignInWithEmailLink(auth, url)) {
+const completeEmailLogin = async () => {
+	if (!isSignInWithEmailLink(auth, window.location.href)) {
 		return null;
 	}
-
 	const email = localStorage.getItem("emailForSignIn");
 	if (!email) {
-		throw new Error("Email not found. Please try again.");
+		throw new Error("Email not found in local storage");
 	}
-
-	const result = await signInWithEmailLink(auth, email, url);
+	const result = await signInWithEmailLink(auth, email, window.location.href);
 	localStorage.removeItem("emailForSignIn");
 	return result.user;
 };
@@ -66,7 +61,7 @@ const fetchUserData = async (uid: string): Promise<User> => {
 			const currentUser = auth.currentUser;
 
 			if (!currentUser) {
-				throw new Error("No authenticated user found");
+				throw new Error("No user found");
 			}
 
 			const newUser: User = {
@@ -112,5 +107,5 @@ export {
 	fetchUserData,
 	signInWithGoogle,
 	sendLoginLink,
-	completeEmailLinkLogin,
+	completeEmailLogin,
 };
