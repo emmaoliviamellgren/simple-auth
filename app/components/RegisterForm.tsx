@@ -3,6 +3,7 @@
 import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+	authenticateWithGoogle,
 	fetchUserData,
 	sendLoginLink,
 	signInWithGoogle,
@@ -11,6 +12,11 @@ import {
 	Alert,
 	Button,
 	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	FormControl,
 	FormHelperText,
 	InputLabel,
@@ -26,10 +32,17 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/state/store";
 import { setUser } from "@/app/state/users/userSlice";
 import { Google } from "@mui/icons-material";
+import { User } from "firebase/auth";
 
 const RegisterForm = () => {
 	const [successMessage, setSuccessMessage] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
+
+	const [openRoleDialog, setOpenRoleDialog] = useState(false);
+	const [selectedRole, setSelectedRole] = useState("");
+	const [roleError, setRoleError] = useState("");
+	const [googleUser, setGoogleUser] = useState<User | null>(null);
+
 	const [loading, setLoading] = useState(false);
 
 	const dispatch = useDispatch<AppDispatch>();
@@ -78,12 +91,44 @@ const RegisterForm = () => {
 		setLoading(false);
 	};
 
-	const handleGoogleRegister = async () => {
+	const handleGoogleClick = async () => {
 		setLoading(true);
+		setErrorMessage("");
+
 		try {
-			const userData = await signInWithGoogle();
-			const user = await fetchUserData(userData.uid);
+			const { googleUser, isNewUser } = await authenticateWithGoogle();
+
+			if (isNewUser) {
+				setGoogleUser(googleUser);
+				setOpenRoleDialog(true);
+			} else {
+				const user = await fetchUserData(googleUser.uid);
+				dispatch(setUser(user));
+			}
+		} catch (error: any) {
+			setErrorMessage(error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleRoleSubmit = async () => {
+		if (!selectedRole) {
+			setRoleError("Please select a role");
+			return;
+		}
+		if (!googleUser) {
+			setErrorMessage("Authentication error");
+			return;
+		}
+		setLoading(true);
+
+		try {
+			localStorage.setItem("userRole", selectedRole);
+			const user = await fetchUserData(googleUser.uid);
 			dispatch(setUser(user));
+
+			setOpenRoleDialog(false);
 		} catch (error: any) {
 			setErrorMessage(error.message);
 		}
@@ -188,7 +233,7 @@ const RegisterForm = () => {
 						</Typography>
 
 						<Button
-							onClick={handleGoogleRegister}
+							onClick={handleGoogleClick}
 							disabled={loading}
 							fullWidth
 							variant="outlined"
@@ -217,6 +262,53 @@ const RegisterForm = () => {
 					</form>
 				</Paper>
 			</Container>
+
+			<Dialog
+				open={openRoleDialog}
+				onClose={() => !loading && setOpenRoleDialog(false)}>
+				<DialogTitle>Select role</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						Select your role to complete registration
+					</DialogContentText>
+					<FormControl
+						fullWidth
+						error={!!roleError}
+						sx={{ mt: 2, mb: 2 }}>
+						<InputLabel>Role</InputLabel>
+						<Select
+							value={selectedRole}
+							onChange={(e) => {
+								setSelectedRole(e.target.value);
+								setRoleError("");
+							}}
+							label="Role">
+							<MenuItem value="doctor">Doctor</MenuItem>
+							<MenuItem value="nurse">Nurse</MenuItem>
+							<MenuItem value="patient">Patient</MenuItem>
+							<MenuItem value="admin">Admin</MenuItem>
+						</Select>
+						{roleError && (
+							<FormHelperText>{roleError}</FormHelperText>
+						)}
+					</FormControl>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={() => setOpenRoleDialog(false)}
+						disabled={loading}
+						color="primary">
+						Cancel
+					</Button>
+					<Button
+						onClick={handleRoleSubmit}
+						disabled={loading}
+						color="primary"
+						variant="contained">
+						Continue
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</>
 	);
 };

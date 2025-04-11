@@ -21,6 +21,17 @@ const signInWithGoogle = async () => {
 	}
 };
 
+const authenticateWithGoogle = async () => {
+	const googleUser = await signInWithGoogle();
+	const docRef = doc(db, "emmasUsers", googleUser.uid);
+	const docSnap = await getDoc(docRef);
+
+	return {
+		googleUser,
+		isNewUser: !docSnap.exists(),
+	};
+};
+
 const sendLoginLink = async (email: string) => {
 	const actionCodeSettings = {
 		url: window.location.origin,
@@ -108,4 +119,5 @@ export {
 	signInWithGoogle,
 	sendLoginLink,
 	completeEmailLogin,
+	authenticateWithGoogle
 };
