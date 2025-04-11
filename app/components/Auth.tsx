@@ -51,18 +51,17 @@ export const Auth = () => {
 
 	return (
 		<>
-			{loading && (
+			{loading ? (
 				<div className="text-center flex items-center justify-center mx-auto">
 					Loading...
 				</div>
-			)}
-			{isAuthenticated ? (
-				<UserData user={user} />
 			) : (
-				<main className="text-center mx-auto px-4 py-8">
-					{showRegister ? <RegisterForm /> : <LoginForm />}
-					<>
-						{showRegister ? (
+				<>
+					{isAuthenticated ? (
+						<UserData user={user} />
+					) : (
+						<main className="text-center mx-auto px-4 py-8">
+							{showRegister ? <RegisterForm /> : <LoginForm />}
 							<Box
 								sx={{
 									mt: 4,
@@ -72,7 +71,9 @@ export const Auth = () => {
 									gap: 1,
 								}}>
 								<Typography variant="body2">
-									Already a member?
+									{showRegister
+										? "Already a member?"
+										: "Don't have an account?"}
 								</Typography>
 								<Typography
 									onClick={() =>
@@ -82,35 +83,12 @@ export const Auth = () => {
 									variant="body2"
 									color="primary"
 									sx={{ cursor: "pointer" }}>
-									Login
+									{showRegister ? "Login" : "Register"}
 								</Typography>
 							</Box>
-						) : (
-							<Box
-								sx={{
-									mt: 4,
-									textAlign: "center",
-									display: "flex",
-									flexDirection: "column",
-									gap: 1,
-								}}>
-								<Typography variant="body2">
-									Don't have an account?
-								</Typography>
-								<Typography
-									onClick={() =>
-										setShowRegister(!showRegister)
-									}
-									component="a"
-									variant="body2"
-									color="primary"
-									sx={{ cursor: "pointer" }}>
-									Register
-								</Typography>
-							</Box>
-						)}
-					</>
-				</main>
+						</main>
+					)}
+				</>
 			)}
 		</>
 	);

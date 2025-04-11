@@ -26,7 +26,6 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/state/store";
 import { setUser } from "@/app/state/users/userSlice";
 import { Google } from "@mui/icons-material";
-import BankId from "./BankId";
 
 const RegisterForm = () => {
 	const [successMessage, setSuccessMessage] = useState("");
@@ -70,7 +69,7 @@ const RegisterForm = () => {
 		setLoading(true);
 		try {
 			await sendLoginLink(data.email);
-			setSuccessMessage("Email sent to" + data.email);
+			setSuccessMessage("Email sent to " + data.email);
 			reset();
 		} catch (error: any) {
 			setErrorMessage(error.message);
